@@ -1,7 +1,7 @@
 class Helpers {
     static localhost: string = 'localhost:3000';
-    static server: string = '1.1.1.1.1:4000';
-    static basePath: string = `http://${this.localhost}`;
+    static server: string = '46.202.140.156:5000';
+    static basePath: string = `http://${this.server}`;
     static apiUrl: string = `${this.basePath}/api/`;
     static secretKey: string = '3434774438';
 }
