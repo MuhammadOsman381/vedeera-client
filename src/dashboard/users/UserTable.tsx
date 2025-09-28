@@ -1,14 +1,12 @@
 import Box from '@mui/material/Box';
 import { DataGrid, type GridColDef } from '@mui/x-data-grid';
-import { useState, useEffect } from 'react';
-import { AppContext } from '../../context/AppContext';
-import type { AppContextType } from '../../context/AppContext';
-import { useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import useGetAndDelete from '../../hooks/useGetAndDelete';
 import axios from 'axios';
-import usePostAndPut from '../../hooks/usePostAndPut';
+import { AppContext } from '../../context/AppContext';
 
 const columns: GridColDef<(any)[number]>[] = [
+    { field: 'id', headerName: 'UserID', flex: 2, minWidth: 200 },
     { field: 'email', headerName: 'Email', flex: 2, minWidth: 200 },
     { field: 'firstname', headerName: 'First name', flex: 1, minWidth: 120 },
     { field: 'lastname', headerName: 'Last name', flex: 1, minWidth: 120 },
@@ -16,34 +14,16 @@ const columns: GridColDef<(any)[number]>[] = [
 ];
 
 export default function UserTable({ searchUser }: { searchUser: string }) {
-    const { addUserForm } = useContext(AppContext) as AppContextType;
+    const context = useContext(AppContext);
+    if (!context) return null;
+    const { refresh } = context;
     const [userRowsData, setUserRowsData] = useState<any[]>([]);
-
     const getUser = useGetAndDelete(axios.get);
-    const addUser = usePostAndPut(axios.post);
-
     const getUsers = async () => {
         const response = await getUser.callApi('users/allUsers', true, false);
+        console.log('Users fetched:', response.data);
         setUserRowsData(response.data);
     };
-
-    useEffect(() => {
-        if (addUserForm.Id === '' || addUserForm.lastName === '' || addUserForm.firstName === '' || addUserForm.role === '') {
-            return;
-        }
-        const payload = {
-            email: addUserForm.Id,
-            firstname: addUserForm.firstName,
-            lastname: addUserForm.lastName,
-            role: addUserForm.role
-        }
-        addUser.callApi('users/create', payload, true, false, true)
-            .then(() => {
-                getUsers();
-            })
-            .catch((error) => { console.error('Error adding user:', error); });
-    }, [addUserForm]);
-
     const filteredUserRowsData = userRowsData.filter(
         (user) =>
             user?.email?.toLowerCase().includes(searchUser.toLowerCase()) ||
@@ -51,11 +31,9 @@ export default function UserTable({ searchUser }: { searchUser: string }) {
             user?.firstname?.toLowerCase().includes(searchUser.toLowerCase()) ||
             user?.role?.toLowerCase().includes(searchUser.toLowerCase())
     );
-
     useEffect(() => {
         getUsers();
-    }, []);
-
+    }, [refresh]);
     return (
         <Box sx={{ height: 400, width: '100%' }}>
             <DataGrid

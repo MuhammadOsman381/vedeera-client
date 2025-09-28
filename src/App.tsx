@@ -1,5 +1,6 @@
 import { lazy, Suspense } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
+import ForgotPassword from './components/ForgetPassword'
 
 const Loading = lazy(() => import('./components/Loading'))
 const LoginPage = lazy(() => import('./components/form/Login'))
@@ -15,6 +16,7 @@ function App() {
       <Suspense fallback={<Loading />}>
         <Routes>
           <Route index element={<LoginPage />} />
+          <Route path='/forgot-password' element={<ForgotPassword />} />
           <Route path="/dashboard" element={<AuthLayout />}>
             <Route element={<MianDashboard />}>
               <Route index element={<Navigate to="users" replace />} />

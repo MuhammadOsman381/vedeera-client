@@ -10,6 +10,7 @@ export interface AddUserFormType {
     firstName: string;
     role: string;
     lastActivity: string;
+    password: string;
 }
 export interface AddEmployeeFormType {
     name: string;
@@ -51,6 +52,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         firstName: '',
         role: '',
         lastActivity: '',
+        password: '',
     });
     const [addEmployeeForm, setAddEmployeeForm] = useState<AddEmployeeFormType>({
         name: "",
