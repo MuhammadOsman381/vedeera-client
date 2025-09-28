@@ -6,10 +6,11 @@ import type { AppContextType } from '../../context/AppContext';
 import axios from 'axios';
 import useGetAndDelete from '../../hooks/useGetAndDelete';
 import usePostAndPut from '../../hooks/usePostAndPut';
+import { app } from '../../config/firebase';
 
 const columns: GridColDef[] = [
     { field: 'name', headerName: 'First name', flex: 1, minWidth: 120 },
-    { field: 'email', headerName: 'Last name', flex: 1, minWidth: 120 },
+    { field: 'email', headerName: 'Email', flex: 1, minWidth: 120 },
     { field: 'crews', headerName: 'Crews', flex: 1, minWidth: 100 },
 ];
 
@@ -17,17 +18,15 @@ export default function EmployeeTable({ search }: { search: string }) {
     const { addEmployeeForm } = useContext(AppContext) as AppContextType;
     const [employeeRowsData, setEmployeeRowsData] = useState<any[]>([]);
 
+
     const getEmploye = useGetAndDelete(axios.get);
     const postEmploye = usePostAndPut(axios.post);
 
     const getEmployees = async () => {
         try {
             const response = await getEmploye.callApi('employees/', true, false);
-            const rowsWithId = response.data.map((emp: any, index: number) => ({
-                id: emp.id ?? index,
-                ...emp,
-            }));
-            setEmployeeRowsData(rowsWithId);
+            console.log('Employees fetched:', response.data);
+            setEmployeeRowsData(response.data);
         } catch (error) {
             console.error(error);
         }
@@ -47,16 +46,18 @@ export default function EmployeeTable({ search }: { search: string }) {
         }
     }, [addEmployeeForm]);
 
-    useEffect(() => {
-        getEmployees();
-    }, []);
 
     const filteredEmployeeRowsData = employeeRowsData.filter((employee) =>
-        [employee.name, employee.email, employee.crews]
+        [employee.name, employee.email, employee.crews.join(' ')] // join array into string
             .some((field) =>
                 field?.toLowerCase().includes(search.toLowerCase())
             )
     );
+
+
+    useEffect(() => {
+        getEmployees();
+    }, []);
 
     return (
         <Box sx={{ height: 400, width: '100%' }}>

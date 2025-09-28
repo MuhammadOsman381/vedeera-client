@@ -17,6 +17,13 @@ export interface AddEmployeeFormType {
     crews: string[];
 }
 
+interface TimeClockRow {
+    id: string;
+    lastName: string;
+    firstName: string;
+    gross: number;
+}
+
 export interface AppContextType {
     isUser: any;
     setIsUser: (isUser: any) => void;
@@ -26,6 +33,10 @@ export interface AppContextType {
     setAddUserForm: (addUserForm: AddUserFormType) => void;
     addEmployeeForm: AddEmployeeFormType;
     setAddEmployeeForm: (addEmployeeForm: AddEmployeeFormType) => void;
+    rows: TimeClockRow[];
+    setRows: (rows: TimeClockRow[]) => void;
+    refresh: boolean;
+    setRefresh: (refresh: boolean) => void;
 }
 
 export const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -47,6 +58,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         crews: []
     });
 
+    const [rows, setRows] = useState<TimeClockRow[]>([]);
+    const [refresh, setRefresh] = useState<boolean>(false);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
@@ -58,7 +71,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
 
     return (
-        <AppContext.Provider value={{ isUser, setIsUser, addUserForm, setAddUserForm, addEmployeeForm, setAddEmployeeForm, isAuthLoading, setIsAuthLoading }}>
+        <AppContext.Provider value={{ isUser, setIsUser, addUserForm, setAddUserForm, addEmployeeForm, setAddEmployeeForm, isAuthLoading, setIsAuthLoading, rows, setRows, refresh, setRefresh }}>
             {children}
         </AppContext.Provider>
     );

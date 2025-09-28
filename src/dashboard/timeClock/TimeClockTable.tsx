@@ -1,8 +1,9 @@
 import { DataGrid, type GridColDef } from '@mui/x-data-grid';
 import { Box, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import useGetAndDelete from '../../hooks/useGetAndDelete';
 import axios from 'axios';
+import { AppContext } from '../../context/AppContext';
 
 interface TimeClockRow {
     id: string;
@@ -16,15 +17,20 @@ const columns: GridColDef<TimeClockRow>[] = [
     { field: 'name', headerName: 'Name', minWidth: 150, flex: 1 },
     { field: 'email', headerName: 'Email', minWidth: 150, flex: 1 },
     { field: 'gross', headerName: 'Gross (hrs)', minWidth: 120, flex: 1 },
+
 ];
 
 export default function TimeClockTable() {
-    const [rows, setRows] = useState<TimeClockRow[]>([]);
+    const context = useContext(AppContext);
+    if (!context) return null;
+
+    const { rows, setRows, refresh } = context;
+
     const getTimeLog = useGetAndDelete(axios.get);
 
     const calculateGrossHours = (startTime: Date, endTime: Date): number => {
         const diffMs = endTime.getTime() - startTime.getTime();
-        return diffMs / (1000 * 60 * 60); // ms → hours
+        return diffMs / (1000 * 60 * 60);
     };
 
     const getTimeLogs = async () => {
@@ -39,11 +45,11 @@ export default function TimeClockTable() {
         );
     };
 
+
     useEffect(() => {
         getTimeLogs();
     }, []);
 
-    // Compute totals
     const totalGross = rows.reduce((sum, row) => sum + row.gross, 0);
 
     return (
@@ -52,7 +58,7 @@ export default function TimeClockTable() {
                 <DataGrid
                     rows={rows}
                     columns={columns}
-                    loading={getTimeLog.loading}
+                    loading={getTimeLog.loading || refresh}
                     initialState={{
                         pagination: {
                             paginationModel: { pageSize: 6 },

@@ -8,10 +8,6 @@ import useGetAndDelete from '../../hooks/useGetAndDelete';
 import axios from 'axios';
 import usePostAndPut from '../../hooks/usePostAndPut';
 
-
-
-
-
 const columns: GridColDef<(any)[number]>[] = [
     { field: 'email', headerName: 'Email', flex: 2, minWidth: 200 },
     { field: 'firstname', headerName: 'First name', flex: 1, minWidth: 120 },
