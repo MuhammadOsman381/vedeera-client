@@ -6,7 +6,6 @@ import type { AppContextType } from '../../context/AppContext';
 import axios from 'axios';
 import useGetAndDelete from '../../hooks/useGetAndDelete';
 import usePostAndPut from '../../hooks/usePostAndPut';
-import { app } from '../../config/firebase';
 
 const columns: GridColDef[] = [
     { field: 'name', headerName: 'First name', flex: 1, minWidth: 120 },

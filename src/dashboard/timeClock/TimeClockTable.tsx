@@ -1,6 +1,6 @@
 import { DataGrid, type GridColDef } from '@mui/x-data-grid';
 import { Box, Typography } from '@mui/material';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import useGetAndDelete from '../../hooks/useGetAndDelete';
 import axios from 'axios';
 import { AppContext } from '../../context/AppContext';

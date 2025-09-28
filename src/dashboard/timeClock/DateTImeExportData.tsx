@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { Box, Typography, Button, setRef } from '@mui/material';
+import { Box, Typography, Button } from '@mui/material';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import type { Dayjs } from 'dayjs';
@@ -21,7 +21,7 @@ export default function DateTimeExportData() {
     const context = useContext(AppContext);
     if (!context) return null;
 
-    const { rows, setRows, refresh, setRefresh } = context;
+    const { rows, setRows, setRefresh } = context;
 
 
     const getFilteredTimeLogs = useGetAndDelete(axios.get);
