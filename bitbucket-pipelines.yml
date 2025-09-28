@@ -1,0 +1,31 @@
+image: node:20-alpine
+
+options:
+  max-time: 20
+  size: 2x
+
+pipelines:
+  branches:
+    develop:
+      - step:
+          name: Build & Deploy → vos-dev-vederra
+          caches: [node]
+          script:
+            - node -v && npm -v
+            - npm ci
+            - export VITE_ENV_NAME=DEV           # was REACT_APP_ENV_NAME
+            - npm run build                      # now runs "vite build"
+            - npm i -g firebase-tools
+            - firebase deploy --only hosting:dev --project "$FIREBASE_PROJECT_ID" --non-interactive --token "$FIREBASE_TOKEN"
+
+    main:
+      - step:
+          name: Build & Deploy → vos-vederra
+          caches: [node]
+          script:
+            - node -v && npm -v
+            - npm ci
+            - export VITE_ENV_NAME=PROD          # was REACT_APP_ENV_NAME
+            - npm run build
+            - npm i -g firebase-tools
+            - firebase deploy --only hosting:prod --project "$FIREBASE_PROJECT_ID" --non-interactive --token "$FIREBASE_TOKEN"
