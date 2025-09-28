@@ -8,7 +8,9 @@ import useGetAndDelete from '../../hooks/useGetAndDelete';
 import usePostAndPut from '../../hooks/usePostAndPut';
 
 const columns: GridColDef[] = [
-    { field: 'name', headerName: 'First name', flex: 1, minWidth: 120 },
+    { field: 'id', headerName: 'EmployeeID', flex: 1, minWidth: 120 },
+    { field: 'firstname', headerName: 'First name', flex: 1, minWidth: 120 },
+    { field: 'lastname', headerName: 'Last name', flex: 1, minWidth: 120 },
     { field: 'email', headerName: 'Email', flex: 1, minWidth: 120 },
     { field: 'crews', headerName: 'Crews', flex: 1, minWidth: 100 },
 ];
@@ -25,7 +27,14 @@ export default function EmployeeTable({ search }: { search: string }) {
         try {
             const response = await getEmploye.callApi('employees/', true, false);
             console.log('Employees fetched:', response.data);
-            setEmployeeRowsData(response.data);
+            setEmployeeRowsData(response.data.map((item: any) => ({
+                id: item.id,
+                firstname: item.name.split("-")[0],
+                lastname: item.name.split("-")[1],
+                email: item.email,
+                crews: item.crews.map((crew: any) => crew),
+            })));
+            console.log('Employee rows data:', employeeRowsData);
         } catch (error) {
             console.error(error);
         }
@@ -41,7 +50,7 @@ export default function EmployeeTable({ search }: { search: string }) {
                 .then(() => {
                     getEmployees();
                 })
-                .catch((error) => { console.error('Error adding employee:', error); });
+                .catch((error) => {console.error('Error adding employee:', error); });
         }
     }, [addEmployeeForm]);
 

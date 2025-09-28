@@ -17,14 +17,18 @@ export default function EmployeeAddModal() {
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const [AddEmployeeFromModal, setAddEmployeeFromModal] = useState<Omit<AddEmployeeFormType, "crews"> & { crews: string[] }>({
+    const [AddEmployeeFromModal, setAddEmployeeFromModal] = useState<
+        Omit<AddEmployeeFormType, "crews"> & { crews: string[], firstName: string, lastName: string }
+    >({
+        firstName: "",
+        lastName: "",
         name: "",
         email: "",
         crews: []
     });
 
     const [selectedCrew, setSelectedCrew] = useState("");
-    const [crewOptions, setCrewOptions] = useState<{id: string, name: string}[]>([]);
+    const [crewOptions, setCrewOptions] = useState<{ id: string, name: string }[]>([]);
 
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -59,17 +63,27 @@ export default function EmployeeAddModal() {
         e.preventDefault();
         setLoading(true);
 
+        const { firstName, lastName, email, crews } = AddEmployeeFromModal;
+
         if (
-            AddEmployeeFromModal.name === '' ||
-            AddEmployeeFromModal.email === '' ||
-            AddEmployeeFromModal.crews.length === 0
+            firstName === '' ||
+            lastName === '' ||
+            email === '' ||
+            crews.length === 0
         ) {
             toast.error('Please fill all the fields');
             setLoading(false);
             return;
         }
 
-        setAddEmployeeForm(AddEmployeeFromModal);
+        // merge first + last name
+        const fullName = `${firstName}-${lastName}`;
+
+        setAddEmployeeForm({
+            ...AddEmployeeFromModal,
+            name: fullName, // merged name
+        });
+
         toggleDrawer(false);
         setLoading(false);
     };
@@ -86,7 +100,7 @@ export default function EmployeeAddModal() {
             const options = crewsSnapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
-            })) as {id: string, name: string}[];
+            })) as { id: string, name: string }[];
             setCrewOptions(options);
         } catch (error) {
             console.error("Error fetching crews:", error);
@@ -133,14 +147,40 @@ export default function EmployeeAddModal() {
                             <Typography variant="h4" fontWeight="semibold" mt={2}>New Employee</Typography>
                         </Box>
 
+                        {/* First Name */}
                         <Box mt={2}>
-                            <Typography variant="body1" fontWeight="semibold">Name</Typography>
-                            <TextField size="small" fullWidth name="name" value={AddEmployeeFromModal.name} onChange={handleChange} />
+                            <Typography variant="body1" fontWeight="semibold">First Name</Typography>
+                            <TextField
+                                size="small"
+                                fullWidth
+                                name="firstName"
+                                value={AddEmployeeFromModal.firstName}
+                                onChange={handleChange}
+                            />
                         </Box>
 
+                        {/* Last Name */}
+                        <Box mt={2}>
+                            <Typography variant="body1" fontWeight="semibold">Last Name</Typography>
+                            <TextField
+                                size="small"
+                                fullWidth
+                                name="lastName"
+                                value={AddEmployeeFromModal.lastName}
+                                onChange={handleChange}
+                            />
+                        </Box>
+
+                        {/* Email */}
                         <Box mt={2}>
                             <Typography variant="body1" fontWeight="semibold">Email</Typography>
-                            <TextField size="small" fullWidth name="email" value={AddEmployeeFromModal.email} onChange={handleChange} />
+                            <TextField
+                                size="small"
+                                fullWidth
+                                name="email"
+                                value={AddEmployeeFromModal.email}
+                                onChange={handleChange}
+                            />
                         </Box>
 
                         {/* ---- Crews Dropdown ---- */}
@@ -175,7 +215,6 @@ export default function EmployeeAddModal() {
                                 ))}
                             </Box>
                         </Box>
-
                     </ThemeProvider>
 
                     <Box sx={{ display: 'inline-flex', justifyContent: 'space-between', alignItems: 'center', gap: 2, mt: 3 }}>

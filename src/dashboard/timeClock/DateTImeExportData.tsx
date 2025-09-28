@@ -49,10 +49,14 @@ export default function DateTimeExportData() {
                 const totalGross = timelogsWithGross.reduce((sum: number, log: any) => sum + log.gross, 0);
                 return {
                     id: item.employee.id,
-                    name: `${item.employee.name} `,
+                    firstname: `${item.employee.name.split("-")[0]}`,
+                    lastname: `${item.employee.name.split("-")[1]}`,
                     email: item.employee.email,
                     gross: Math.round(totalGross * 100) / 100,
-                    timelogs: timelogsWithGross,
+                    lunch: -2.5,
+                    holidays: 0,
+                    netHours: Math.round(totalGross * 100) / 100 - 2.5,
+                    overtime: 0,
                 };
             });
             setRows(rows);
@@ -152,9 +156,14 @@ export default function DateTimeExportData() {
                                     setRows(
                                         response.data.map((item: any) => ({
                                             id: item.id,
-                                            name: item.employee.name,
+                                            firstname: item.employee.name.split("-")[0],
+                                            lastname: item.employee.name.split("-")[1],
                                             email: item.employee.email,
                                             gross: calculateGrossHours(new Date(item.startTime), new Date(item.endTime)),
+                                            lunch: -2.5,
+                                            holidays: 0,
+                                            netHours: calculateGrossHours(new Date(item.startTime), new Date(item.endTime)) - 2.5,
+                                            overtime: 0,
                                         }))
                                     );
                                 } catch (error) {

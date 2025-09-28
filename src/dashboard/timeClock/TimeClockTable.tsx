@@ -14,10 +14,14 @@ interface TimeClockRow {
 
 const columns: GridColDef<TimeClockRow>[] = [
     { field: 'id', headerName: 'ID', minWidth: 100, flex: 1 },
-    { field: 'name', headerName: 'Name', minWidth: 150, flex: 1 },
+    { field: 'firstname', headerName: 'First Name', minWidth: 150, flex: 1 },
+    { field: 'lastname', headerName: 'Last Name', minWidth: 150, flex: 1 },
     { field: 'email', headerName: 'Email', minWidth: 150, flex: 1 },
     { field: 'gross', headerName: 'Gross (hrs)', minWidth: 120, flex: 1 },
-
+    { field: 'lunch', headerName: 'Lunch', minWidth: 120, flex: 1 },
+    { field: 'holidays', headerName: 'Holidays', minWidth: 120, flex: 1 },
+    { field: 'netHours', headerName: 'NetHours', minWidth: 120, flex: 1 },
+    { field: 'overtime', headerName: 'OverTime', minWidth: 120, flex: 1 },
 ];
 
 export default function TimeClockTable() {
@@ -38,9 +42,14 @@ export default function TimeClockTable() {
         setRows(
             response.data.map((item: any) => ({
                 id: item.id,
-                name: item.employee.name,
+                firstname: item.employee.name.split("-")[0],
+                lastname: item.employee.name.split("-")[1],
                 email: item.employee.email,
                 gross: calculateGrossHours(new Date(item.startTime), new Date(item.endTime)),
+                lunch: -2.5,
+                holidays: 0,
+                netHours: calculateGrossHours(new Date(item.startTime), new Date(item.endTime)) - 2.5,
+                overtime: 0,
             }))
         );
     };
